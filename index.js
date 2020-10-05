@@ -1,25 +1,26 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-require("dotenv").config();
-
+const bodyParser = require("body-parser");
+const apiRouter = require("./routers/routes");
+const path = require("path");
 const app = express();
 
 const port = process.env.PORT || 8080;
 const mongo_url = process.env.MONGO_URL;
 
-app.use(
-  express.urlencoded({
-    extended: false,
-  })
-);
+app.set("views", path.resolve(__dirname + "/views"));
+// console.log(path.join(__dirname, "/views"));
+app.set("view engine", "ejs");
+
+app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: false }));
+
+app.use("/api", apiRouter);
+
 mongoose.connect(mongo_url, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
-
-app.get("/", function (request, response) {
-  //   console.log(request.IncomingMessage);
-  response.send("hello, world!");
 });
 
 app.listen(port, function () {
